@@ -31,13 +31,6 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v1
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -50,7 +43,7 @@ jobs:
         run: echo "CODEARTIFACT_AUTH_TOKEN=$(aws codeartifact get-authorization-token --domain ${{ secrets.AWS_CODEARTIFACT_DOMAIN }} --domain-owner ${{ secrets.AWS_ACCOUNT }} --region ${{ secrets.AWS_REGION }} --query authorizationToken --output text)" >> $GITHUB_OUTPUT
 
       - name: Build with Maven
-        run: mvn -B package -s ./.mvn/settings.xml -DskipTests --file pom.xml
+        run: mvn -B package -s ./.mvn/settings.xml -DskipTests
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
