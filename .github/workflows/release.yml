@@ -62,5 +62,32 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: build
+          name: build-${{ steps.get-version.outputs.VERSION }}
           path: target/build-${{ steps.get-version.outputs.VERSION }}.war
+
+  release-project:
+    name: Release
+    runs-on: ubuntu-latest
+    needs: build-project
+    steps:
+
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: build-${{ needs.build-project.outputs.VERSION }}
+
+      - name: Archive artifact
+        uses: thedoctor0/zip-release@master
+        with:
+          filename: build-${{ needs.build-project.outputs.VERSION }}.zip
+
+      - name: Create a Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: v${{ needs.build-project.outputs.VERSION }}
+          tag: ${{ needs.build-project.outputs.VERSION }}
+          artifactErrorsFailBuild: true
+          artifacts: build-${{ needs.build-project.outputs.VERSION }}.zip
+          artifactContentType: application/zip
+          skipIfReleaseExists: true
