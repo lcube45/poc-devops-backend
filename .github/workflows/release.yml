@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+    paths-ignore:
+      - '.github/**/*.yml'
+      - '.gitignore'
+
+jobs:
+
+  test-project:
+    name: Unit tests
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '19'
+          cache: 'maven'
+
+      - name: Run Tests
+        run: mvn -B test
