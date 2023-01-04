@@ -16,6 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       CODEARTIFACT_AUTH_TOKEN: ${{ steps.get-codeartifact-token.outputs.CODEARTIFACT_AUTH_TOKEN }}
+      VERSION: ${{ steps.get-version.outputs.VERSION }}
 
     steps:
 
@@ -30,6 +31,13 @@ jobs:
           distribution: 'corretto'
           java-version: '17'
           cache: 'maven'
+
+      - name: Get current version
+        id: get-version
+        run: echo "VERSION=$(mvn org.apache.maven.plugins:maven-help-plugin:3.2.0:evaluate -Dexpression=project.version)" >> $GITHUB_OUTPUT
+
+      - name: Debug
+        run: echo ${{ steps.get-version.outputs.VERSION }}
 
       - name: Cache Maven packages
         uses: actions/cache@v1
