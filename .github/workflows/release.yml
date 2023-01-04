@@ -36,9 +36,6 @@ jobs:
         id: get-version
         run: echo "VERSION=$(cat pom.xml | grep "^    <version>.*</version>$" | awk -F'[><]' '{print $3}')" >> $GITHUB_OUTPUT
 
-      - name: Debug
-        run: echo ${{ steps.get-version.outputs.VERSION }}
-
       - name: Cache Maven packages
         uses: actions/cache@v1
         with:
@@ -66,4 +63,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: target/build-0.0.1.war
+          path: target/build-${{ steps.get-version.outputs.VERSION }}.war
