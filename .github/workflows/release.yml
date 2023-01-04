@@ -31,6 +31,13 @@ jobs:
           java-version: '17'
           cache: 'maven'
 
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -44,6 +51,8 @@ jobs:
 
       - name: Build with Maven
         run: mvn -B package -s ./.mvn/settings.xml -DskipTests
+        env:
+          CODEARTIFACT_AUTH_TOKEN: ${{ steps.get-codeartifact-token.outputs.CODEARTIFACT_AUTH_TOKEN }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
