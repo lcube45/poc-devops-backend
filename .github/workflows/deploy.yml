@@ -19,7 +19,9 @@ jobs:
           fileName: "*.zip"
 
       - name: Rename artefact
-        run: mv build-${{ steps.download-release-asset.outputs.tag_name }}.zip build.zip
+        run: |
+          mv build-${{ steps.download-release-asset.outputs.tag_name }}.zip build.zip
+          ls -al
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
