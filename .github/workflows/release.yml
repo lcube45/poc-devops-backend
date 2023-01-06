@@ -124,7 +124,6 @@ jobs:
 
       - name: Deploy asset to AWS s3
         run: |
-          aws s3 rm s3://${{ secrets.AWS_S3_BUCKET }}/ --recursive
           aws s3 cp ./build.zip s3://${{ secrets.AWS_S3_BUCKET }}
 
       - name: Launch AWS codedeploy deployment
