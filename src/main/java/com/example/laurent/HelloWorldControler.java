@@ -8,6 +8,6 @@ public class HelloWorldControler {
 
     @GetMapping("/")
     public String bonjourLaurent() {
-        return "Hello World ! - Release 0.0.8";
+        return "Hello World ! - Release 0.0.9";
     }
 }
