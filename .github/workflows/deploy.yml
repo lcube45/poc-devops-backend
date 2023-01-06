@@ -18,9 +18,8 @@ jobs:
           latest: true
           fileName: "*.zip"
 
-      - name: Unzip latest release asset
-        run: |
-          unzip -d release build-${{ steps.download-release-asset.outputs.tag_name }}.zip
+      - name: Rename artefact
+        run: mv build-${{ steps.download-release-asset.outputs.tag_name }}.zip build.zip
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -32,4 +31,8 @@ jobs:
       - name: Deploy asset to AWS s3
         run: |
           aws s3 rm s3://${{ secrets.AWS_S3_BUCKET }}/ --recursive
-          aws s3 cp release s3://${{ secrets.AWS_S3_BUCKET }} --recursive
+          aws s3 cp build.zip s3://${{ secrets.AWS_S3_BUCKET }} --recursive
+
+      - name: Launch AWS codedeploy deployment
+        run : |
+          aws deploy create-deployment --application-name poc-inetum --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name HelloWorldDeploymentGroup --s3-location bucket=poc-devops-backend,bundleType=zip,key=build.zip

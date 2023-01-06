@@ -59,12 +59,15 @@ jobs:
         env:
           CODEARTIFACT_AUTH_TOKEN: ${{ steps.get-codeartifact-token.outputs.CODEARTIFACT_AUTH_TOKEN }}
 
+      - name: Move war artefact
+        run: mv target/build.war build.war
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: build-${{ steps.get-version.outputs.VERSION }}
           path: |
-            target/build.war
+            build.war
             scripts/
             appspec.yml
 
