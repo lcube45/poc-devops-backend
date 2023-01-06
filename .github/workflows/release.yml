@@ -102,6 +102,8 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: release-project
+    outputs:
+      REVISION: ${{ steps.get-revision.outputs.REVISION }}
 
     steps:
 
@@ -126,6 +128,12 @@ jobs:
         run: |
           aws s3 cp ./build.zip s3://${{ secrets.AWS_S3_BUCKET }}
 
+      - name: Get artefact s3 revision id
+        id: get-revision
+        run: |
+          echo "REVISION=$(aws s3api list-object-versions --bucket poc-devops-backend --prefix build.zip --query 'Versions[?IsLatest].[VersionId]' --output text)" >> $GITHUB_OUTPUT
+
+
       - name: Launch AWS codedeploy deployment
         run : |
-          aws deploy create-deployment --application-name poc-inetum --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name HelloWorldDeploymentGroup --s3-location bucket=poc-devops-backend,bundleType=zip,key=build.zip
+          aws deploy create-deployment --application-name poc-inetum --deployment-config-name CodeDeployDefault.OneAtATime --deployment-group-name HelloWorldDeploymentGroup --s3-location bucket=poc-devops-backend,bundleType=zip,key=build.zip,version=${{ steps.get-revision.outputs.REVISION }}
