@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>build</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <packaging>war</packaging>
     <name>laurent</name>
     <description>laurent</description>
@@ -38,7 +38,7 @@
     </dependencies>
 
     <build>
-        <!--finalName></finalName-->
+        <finalName>build</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
